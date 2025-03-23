@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yay Bello Memory Game!!</title>
+    <style>
+        body {
+            text-align: center;
+            background-color: pink;
+            font-family: Winkle, sans-serif;
+        }
+        .game-container {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        .card {
+            width: 100px;
+            height: 100px;
+            background-image: url("heart.png");
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .hidden {
+            background-image: none;
+            background-color: white;
+        }
+        #winMessage {
+            display: none;
+            font-size: 24px;
+            font-weight: bold;
+            color: black;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Yay Bello Memory Game!! </h1>
+    <p>Match all the pairs!</p>
+    <div class="game-container" id="gameBoard"></div>
+    <p id="winMessage">Yay, you did it! I am proud! 🎉</p>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        const icons = [
+            "bear.png", "daredevil.png", "blueberry.png", "plumeria.png",
+            "bee.png", "creeper.png", "minion.png", "yellowjackets.png"
+        ];
+        let cards = [...icons, ...icons]; // Make pairs
+        let flippedCards = [];
+        let matchedPairs = 0;
+
+        // Shuffle cards
+        cards.sort(() => Math.random() - 0.5);
+
+        // Create game board
+        const gameBoard = document.getElementById("gameBoard");
+        cards.forEach((icon, index) => {
+            const card = document.createElement("div");
+            card.classList.add("card");
+            card.dataset.icon = icon;
+            card.dataset.index = index;
+            card.addEventListener("click", flipCard);
+            gameBoard.appendChild(card);
+        });
+
+        function flipCard() {
+            if (flippedCards.length < 2 && !this.classList.contains("matched")) {
+                this.style.backgroundImage = `url(${this.dataset.icon})`;
+                flippedCards.push(this);
+            }
+
+            if (flippedCards.length === 2) {
+                setTimeout(checkMatch, 500);
+            }
+        }
+
+        function checkMatch() {
+            if (flippedCards[0].dataset.icon === flippedCards[1].dataset.icon) {
+                flippedCards.forEach(card => card.classList.add("matched"));
+                matchedPairs++;
+            } else {
+                flippedCards.forEach(card => card.style.backgroundImage = "url('heart.png')");
+            }
+            flippedCards = [];
+
+            if (matchedPairs === 8) {
+                document.getElementById("winMessage").style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>
